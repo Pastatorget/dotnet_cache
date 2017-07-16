@@ -159,12 +159,14 @@ namespace dotnet_cache
         #region Sync methods
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            this.FetchCachedContext(actionContext);
+            var context = this.FetchCachedContext(actionContext);
+            base.OnActionExecuting(context);
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
             this.CacheContext(actionExecutedContext);
+            base.OnActionExecuted(actionExecutedContext);
         }
         #endregion
 
