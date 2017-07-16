@@ -14,11 +14,30 @@ namespace dotnet_cache
 {
     public class WebApiCacheAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// How long cache should stay alive on the server
+        /// </summary>
         public Int32 ServerTimeSpan { get; private set; } = 120;
+
+        /// <summary>
+        /// How long current response should be valid on the client
+        /// </summary>
         public Int32 ClientTimeSpan { get; private set; } = 60;
+
+        /// <summary>
+        /// Only allow anonymous calls
+        /// </summary>
         public Boolean AnonymousOnly { get; private set; } = false;
+
+        /// <summary>
+        /// Cachekey to be affiliated with stored object
+        /// </summary>
         public String CacheKey { get; private set; }
 
+
+        /// <summary>
+        /// Object cache store
+        /// </summary>
         private static readonly ObjectCache _cache = MemoryCache.Default;
 
         public WebApiCacheAttribute()
@@ -137,6 +156,7 @@ namespace dotnet_cache
             }
         }
 
+        #region Sync methods
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             this.FetchCachedContext(actionContext);
@@ -146,7 +166,9 @@ namespace dotnet_cache
         {
             this.CacheContext(actionExecutedContext);
         }
+        #endregion
 
+        #region Async methods
         public override Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
             var context = this.FetchCachedContext(actionContext);
@@ -160,5 +182,6 @@ namespace dotnet_cache
 
             return base.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
         }
+        #endregion
     }
 }
